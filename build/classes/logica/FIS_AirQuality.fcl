@@ -1,0 +1,109 @@
+FUNCTION_BLOCK prop
+
+VAR_INPUT				
+        concentracion_pm25 : REAL; RANGE := (0 .. 354);
+        concentracion_pm10 : REAL; RANGE := (0 .. 150);
+        concentracioin_o3 : REAL; RANGE := (0 .. 207);
+END_VAR
+
+VAR_OUTPUT				
+        tiempo_duracion: REAL; RANGE := (0 .. 48);
+        tipo_episodio : REAL; RANGE := (0 .. 100);
+END_VAR
+
+FUZZIFY concentracion_pm25		
+        TERM baja := trape -52.3 -2.21 45.2 104; 
+        TERM media := trape 45.2 104 168 215;
+        TERM alta := trape 168.6 215.6 270.2 310.1;
+        TERM muy_alta := trape 270 310 356.804577464789 397;
+END_FUZZIFY
+
+FUZZIFY concentracion_pm10 
+        TERM baja := trape -15.7 -0.213 5.53 16; 
+        TERM media := trape 5 16 35 53;
+        TERM alta := trape 35 53 72 89; 
+        TERM muy_alta := trape 72 89 155 216;
+END_FUZZIFY
+
+FUZZIFY concentracion_o3
+        TERM baja := trape -72.5 -8.69 35 75; 
+        TERM media := trape 35 75 95 122;
+        TERM alta := trape 150 161 238.9 244; 
+        TERM muy_alta := trape 95 122 150 161;
+END_FUZZIFY
+
+DEFUZZIFY tiempo_duracion		
+        TERM corto:= trape -4.38 -0.3175 6.64 10.46;
+        TERM medio := trape 8.26 12.18 19.12 24.95;
+        TERM extenso:= trape 32.45 39 49.6 49.8;
+        TERM muy_extenso:= trape 19.02 23.4 32.6 36.89;
+        METHOD : COG;	
+        DEFAULT := 0;
+END_DEFUZZIFY
+
+DEFUZZIFY tipo_episodio		
+        TERM buena := trape -82 0 15 25;
+        TERM moderada := trape 15 25 35 45;
+        TERM danina := trape 35 45 55 65;
+        TERM peligroso := trape 55 65 75 85;
+        TERM muy_peligroso := trape 75 85 100 110;
+        METHOD : COG;	
+        DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+        AND : MIN;
+        ACT : MIN;
+        ACCU : MAX;
+   
+        RULE 1 : IF (concentracion_pm25 IS muy_alta) 
+                THEN tipo_episodio IS muy_peligroso WITH 1.0;                                                                          
+        RULE 2 : IF (concentracion_pm25 IS alta) 
+                THEN tipo_episodio IS peligroso WITH 0.5;                                                                                   
+        RULE 3 : IF (concentracion_pm25 IS media) 
+                THEN tipo_episodio IS moderada WITH 0.2;  
+        RULE 4 : IF (concentracion_pm25 IS baja) 
+                THEN tipo_episodio IS buena WITH 0.2;   
+        RULE 5 : IF (concentracion_pm10 IS muy_alta) 
+                THEN tipo_episodio IS muy_peligroso WITH 1.0;                                                                          
+        RULE 6 : IF (concentracion_pm10 IS alta) 
+                THEN tipo_episodio IS peligroso WITH 0.5;                                                                                   
+        RULE 7 : IF (concentracion_pm10 IS media) 
+                THEN tipo_episodio IS moderada WITH 0.2;  
+        RULE 8 : IF (concentracion_pm10 IS baja) 
+                THEN tipo_episodio IS buena WITH 0.2;     
+        RULE 9 : IF (concentracion_o3 IS muy_alta) 
+                THEN tipo_episodio IS muy_peligroso WITH 1.0;                                                                          
+        RULE 10 : IF (concentracion_o3 IS alta) 
+                THEN tipo_episodio IS peligroso WITH 0.2;                                                                                   
+        RULE 11 : IF (concentracion_o3 IS media) 
+                THEN tipo_episodio IS moderada WITH 0.2;  
+        RULE 12 : IF (concentracion_o3 IS baja) 
+                THEN tipo_episodio IS buena WITH 0.3; 
+        RULE 13 : IF (concentracion_pm10 IS muy_alta) 
+                THEN tiempo_duracion IS muy_extenso WITH 1.0; 
+        RULE 14 : IF (concentracion_pm10 IS alta) 
+                THEN tiempo_duracion IS extenso WITH 1.0;         
+        RULE 15 : IF (concentracion_pm10 IS media) 
+                THEN tiempo_duracion IS medio WITH 1.0;          
+        RULE 16 : IF (concentracion_pm10 IS baja) 
+                THEN tiempo_duracion IS corto WITH 1.0;           
+        RULE 18 : IF (concentracion_pm25 IS alta) 
+                THEN tiempo_duracion IS extenso WITH 0.5;        
+        RULE 19 : IF (concentracion_pm25 IS media) 
+                THEN tiempo_duracion IS medio WITH 0.5;      
+        RULE 20 : IF (concentracion_pm25 IS baja) 
+                THEN tiempo_duracion IS corto WITH 0.5;     
+        RULE 21 : IF (concentracion_o3 IS muy_alta) 
+                THEN tiempo_duracion IS muy_extenso WITH 0.3;
+        RULE 22 : IF (concentracion_o3 IS alta) 
+                THEN tiempo_duracion IS extenso WITH 0.3;        
+        RULE 23 : IF (concentracion_o3 IS media) 
+                THEN tiempo_duracion IS medio WITH 0.3;      
+        RULE 24 : IF (concentracion_o3 IS baja) 
+                THEN tiempo_duracion IS corto WITH 0.3; 
+                                                                                                             
+                         
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
