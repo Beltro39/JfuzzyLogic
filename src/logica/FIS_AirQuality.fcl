@@ -3,7 +3,7 @@ FUNCTION_BLOCK prop
 VAR_INPUT				
         concentracion_pm25 : REAL; RANGE := (0 .. 354);
         concentracion_pm10 : REAL; RANGE := (0 .. 150);
-        concentracioin_o3 : REAL; RANGE := (0 .. 207);
+        concentracion_o3 : REAL; RANGE := (0 .. 207);
 END_VAR
 
 VAR_OUTPUT				

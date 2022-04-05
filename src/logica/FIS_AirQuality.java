@@ -49,6 +49,6 @@ public class FIS_AirQuality {
                 "\n"+"Espero haberte ayudado, se despide tu chatbot Bibi."+
                 "\n"+"");
         */
-        return ("Tiempo_duracion: "+ String.format("%.1f", salida)+ "\n Tipo_episodio: "+ String.format("%.1f", salida2));
+        return ("Tiempo_duracion: "+ String.format("%.1f", salida)+ " horas\n Tipo_episodio: "+ String.format("%.1f", salida2)+" %");
     }
 }
